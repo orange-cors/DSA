@@ -76,6 +76,6 @@ int main(){
     Student s1={1,"Nguyen","Anh","Male",2000,8.5};
 
     insertStudent(L,0,s1);
+    cout <<"https://drive.google.com/drive/folders/10w7Ru6f94XUKMdwhjQTTNuW8kRjuH-4j?fbclid=IwY2xjawOuRhVleHRuA2FlbQIxMQBzcnRjBmFwcF9pZAEwAAEeyvKnfBkIrOg3l3mJF8PkFGKe9QbtneWZnqNIXJJaiENThoCFLtsg_gD8O_Y_aem_rnJEjXVPrjruX4fuVAdZGw";
 
 }
-https://drive.google.com/drive/folders/10w7Ru6f94XUKMdwhjQTTNuW8kRjuH-4j?fbclid=IwY2xjawOuRhVleHRuA2FlbQIxMQBzcnRjBmFwcF9pZAEwAAEeyvKnfBkIrOg3l3mJF8PkFGKe9QbtneWZnqNIXJJaiENThoCFLtsg_gD8O_Y_aem_rnJEjXVPrjruX4fuVAdZGw
