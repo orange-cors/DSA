@@ -1,237 +1,245 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="NhanVien.xslt"?>
-<DanhSachNhanVien xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:noNamespaceSchemaLocation="NhanVien.xsd">
-    <NhanVien>
-        <MaNV>nv01</MaNV>
-        <HoTen>
-            <HoDem>Trần Đức</HoDem>
-            <Ten>Minh</Ten>
-        </HoTen>
-        <GioiTinh>Nam</GioiTinh>
-        <NgaySinh>12-03-1998</NgaySinh>
-        <MaPhong>HCKT01</MaPhong>
-        <Luong>9500000</Luong>
-    </NhanVien>
-    <NhanVien>
-        <MaNV>nv02</MaNV>
-        <HoTen>
-            <HoDem>Nguyễn Thị</HoDem>
-            <Ten>Hương</Ten>
-        </HoTen>
-        <GioiTinh>Nữ</GioiTinh>
-        <NgaySinh>06-11-1999</NgaySinh>
-        <MaPhong>NHNS02</MaPhong>
-        <Luong>10500000</Luong>
-    </NhanVien>
-    <NhanVien>
-        <MaNV>nv03</MaNV>
-        <HoTen>
-            <HoDem>Lê Văn</HoDem>
-            <Ten>Bình</Ten>
-        </HoTen>
-        <GioiTinh>Nam</GioiTinh>
-        <NgaySinh>21-07-1997</NgaySinh>
-        <MaPhong>KDTO03</MaPhong>
-        <Luong>8000000</Luong>
-    </NhanVien>
-    <NhanVien>
-        <MaNV>nv04</MaNV>
-        <HoTen>
-            <HoDem>Phạm Ngọc</HoDem>
-            <Ten>Anh</Ten>
-        </HoTen>
-        <GioiTinh>Nữ</GioiTinh>
-        <NgaySinh>15-05-2000</NgaySinh>
-        <MaPhong>HCKT01</MaPhong>
-        <Luong>9000000</Luong>
-    </NhanVien>
-    <NhanVien>
-        <MaNV>nv05</MaNV>
-        <HoTen>
-            <HoDem>Đỗ Quốc</HoDem>
-            <Ten>Tuấn</Ten>
-        </HoTen>
-        <GioiTinh>Nam</GioiTinh>
-        <NgaySinh>08-09-1998</NgaySinh>
-        <MaPhong>KDTO03</MaPhong>
-        <Luong>11200000</Luong>
-    </NhanVien>
-    <NhanVien>
-        <MaNV>nv06</MaNV>
-        <HoTen>
-            <HoDem>Vũ Thu</HoDem>
-            <Ten>Trang</Ten>
-        </HoTen>
-        <GioiTinh>Nữ</GioiTinh>
-        <NgaySinh>24-12-2001</NgaySinh>
-        <MaPhong>NHNS02</MaPhong>
-        <Luong>8800000</Luong>
-    </NhanVien>
-</DanhSachNhanVien>
+namespace DotNET
+{
+    internal class DienThoai
+    {
+        public string maDT { get; set; }
+        public string tenDT { get; set; }
+        public double giaBan { get; set; }
+        public string hangSX { get; set; }
+
+        public DienThoai()
+            : this("", "", 0, "")
+        {
+
+        }
+
+        public DienThoai(string maDT, string tenDT, double giaBan, string hangSX)
+        {
+            this.maDT = maDT;
+            this.tenDT = tenDT;
+            this.giaBan = giaBan;
+            this.hangSX = hangSX;
+        }
+
+        public virtual double TinhGia()
+        {
+            return giaBan;
+        }
+    }
+}
 
 
-<?xml version="1.0" encoding="UTF-8"?>
+using System;
 
-<xs:schema
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+namespace DotNET
+{
+    internal class DienThoaiGiam : DienThoai
+    {
+        public float phanTramGiam { get; set; }
 
-    <!-- MaNV: nv + 2 chu so -->
-    <xs:simpleType name="KieuMaNV">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="nv[0-9]{2}"/>
-        </xs:restriction>
-    </xs:simpleType>
+        public DienThoaiGiam()
+        {
+        }
 
-    <!-- GioiTinh: Nam hoac Nữ -->
-    <xs:simpleType name="KieuGioiTinh">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Nam"/>
-            <xs:enumeration value="Nữ"/>
-        </xs:restriction>
-    </xs:simpleType>
+        public DienThoaiGiam(string maDT, string tenDT, double giaBan,
+            string hangSX, float phanTramGiam)
+            : base(maDT, tenDT, giaBan, hangSX)
+        {
+            this.phanTramGiam = phanTramGiam;
+        }
 
-    <!-- NgaySinh: DD-MM-YYYY -->
-    <xs:simpleType name="KieuNgaySinh">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="[0-9]{2}-[0-9]{2}-[0-9]{4}"/>
-        </xs:restriction>
-    </xs:simpleType>
+        public void NhapThongTin()
+        {
+            maDT = NhapChuoi("Nhap ma dien thoai: ");
+            tenDT = NhapChuoi("Nhap ten san pham: ");
 
-    <!-- MaPhong: 4 chu hoa + 2 chu so -->
-    <xs:simpleType name="KieuMaPhong">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="[A-Z]{4}[0-9]{2}"/>
-        </xs:restriction>
-    </xs:simpleType>
+            double gia;
+            do
+            {
+                Console.Write("Nhap gia ban goc (>= 0): ");
+            }
+            while (!double.TryParse(Console.ReadLine(), out gia)
+                || double.IsNaN(gia) || double.IsInfinity(gia) || gia < 0);
+            giaBan = gia;
 
-    <!-- Luong: so nguyen lon hon 0 -->
-    <xs:simpleType name="KieuLuong">
-        <xs:restriction base="xs:integer">
-            <xs:minExclusive value="0"/>
-        </xs:restriction>
-    </xs:simpleType>
+            hangSX = NhapChuoi("Nhap hang san xuat: ");
 
-    <!-- Cau truc danh sach nhan vien -->
-    <xs:element name="DanhSachNhanVien">
-        <xs:complexType>
-            <xs:sequence>
+            float giam;
+            do
+            {
+                Console.Write("Nhap phan tram giam (0 - 100): ");
+            }
+            while (!float.TryParse(Console.ReadLine(), out giam)
+                || float.IsNaN(giam) || float.IsInfinity(giam)
+                || giam < 0 || giam > 100);
+            phanTramGiam = giam;
+        }
 
-                <xs:element name="NhanVien"
-                            minOccurs="1"
-                            maxOccurs="unbounded">
+        private static string NhapChuoi(string thongBao)
+        {
+            string giaTri;
+            do
+            {
+                Console.Write(thongBao);
+                giaTri = (Console.ReadLine() ?? "").Trim();
+            }
+            while (giaTri.Length == 0);
+            return giaTri;
+        }
 
-                    <xs:complexType>
-                        <xs:sequence>
+        public override double TinhGia()
+        {
+            return giaBan * (1 - phanTramGiam / 100.0);
+        }
 
-                            <xs:element name="MaNV"
-                                        type="KieuMaNV"/>
+        public string LoaiGiam()
+        {
+            if (phanTramGiam > 30)
+                return "Sieu sale";
+            if (phanTramGiam >= 10)
+                return "Khuyen mai";
+            return "Binh thuong";
+        }
 
-                            <xs:element name="HoTen">
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element name="HoDem"
-                                                    type="xs:string"/>
-                                        <xs:element name="Ten"
-                                                    type="xs:string"/>
-                                    </xs:sequence>
-                                </xs:complexType>
-                            </xs:element>
+        public static void HienThiTieuDe()
+        {
+            Console.WriteLine("{0,-12} {1,-25} {2,-15} {3,18} {4,10} {5,18} {6,-12}",
+                "Ma DT", "Ten san pham", "Hang SX", "Gia ban goc", "Giam (%)", "Gia sau giam", "Xep loai");
+        }
 
-                            <xs:element name="GioiTinh"
-                                        type="KieuGioiTinh"/>
+        public void HienThi()
+        {
+            Console.WriteLine("{0,-12} {1,-25} {2,-15} {3,18:N2} {4,10} {5,18:N2} {6,-12}",
+                maDT, tenDT, hangSX, giaBan, phanTramGiam, TinhGia(), LoaiGiam());
+        }
+    }
+}
 
-                            <xs:element name="NgaySinh"
-                                        type="KieuNgaySinh"/>
 
-                            <xs:element name="MaPhong"
-                                        type="KieuMaPhong"/>
+using System;
+using System.Collections.Generic;
 
-                            <xs:element name="Luong"
-                                        type="KieuLuong"/>
+namespace DotNET
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List<DienThoaiGiam> danhSach = new List<DienThoaiGiam>();
 
-                        </xs:sequence>
-                    </xs:complexType>
+            while (true)
+            {
+                Console.WriteLine("\n========== QUAN LY DIEN THOAI ==========");
+                Console.WriteLine("1. Them dien thoai moi");
+                Console.WriteLine("2. Hien thi tat ca theo gia sau giam tang dan");
+                Console.WriteLine("3. Liet ke dien thoai theo muc gia toi da");
+                Console.WriteLine("4. Tim kiem theo ma dien thoai");
+                Console.WriteLine("0. Thoat");
+                Console.Write("Chon chuc nang: ");
 
-                </xs:element>
+                string luaChon = Console.ReadLine();
+                if (luaChon == null)
+                    return;
 
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+                switch (luaChon.Trim())
+                {
+                    case "1":
+                        ThemDienThoai(danhSach);
+                        break;
+                    case "2":
+                        List<DienThoaiGiam> danhSachSapXep = new List<DienThoaiGiam>(danhSach);
+                        SapXepTheoGia(danhSachSapXep);
+                        HienThiDanhSach(danhSachSapXep);
+                        break;
+                    case "3":
+                        LocTheoGia(danhSach);
+                        break;
+                    case "4":
+                        TimTheoMa(danhSach);
+                        break;
+                    case "0":
+                        Console.WriteLine("Da thoat chuong trinh.");
+                        return;
+                    default:
+                        Console.WriteLine("Lua chon khong hop le. Vui long chon tu 0 den 4.");
+                        break;
+                }
+            }
+        }
 
-</xs:schema>
+        private static void ThemDienThoai(List<DienThoaiGiam> danhSach)
+        {
+            DienThoaiGiam dienThoai = new DienThoaiGiam();
+            dienThoai.NhapThongTin();
 
-<?xml version="1.0" encoding="UTF-8"?>
+            foreach (DienThoaiGiam dt in danhSach)
+            {
+                if (string.Equals(dt.maDT, dienThoai.maDT, StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Ma dien thoai da ton tai. Khong them vao danh sach.");
+                    return;
+                }
+            }
 
-<xsl:stylesheet version="1.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+            danhSach.Add(dienThoai);
+            Console.WriteLine("Them dien thoai thanh cong.");
+        }
 
-    <xsl:output method="html" encoding="UTF-8"/>
+        private static void SapXepTheoGia(List<DienThoaiGiam> danhSach)
+        {
+            danhSach.Sort((a, b) => a.TinhGia().CompareTo(b.TinhGia()));
+        }
 
-    <xsl:template match="/">
-        <html>
-            <head>
-                <meta charset="UTF-8"/>
-                <title>Danh sach nhan vien</title>
-            </head>
+        private static void HienThiDanhSach(List<DienThoaiGiam> danhSach)
+        {
+            if (danhSach.Count == 0)
+            {
+                Console.WriteLine("Khong co dien thoai nao de hien thi.");
+                return;
+            }
 
-            <body>
-                <h2>DANH SÁCH NHÂN VIÊN</h2>
+            DienThoaiGiam.HienThiTieuDe();
+            foreach (DienThoaiGiam dienThoai in danhSach)
+                dienThoai.HienThi();
+        }
 
-                <table border="1" cellpadding="8">
+        private static void LocTheoGia(List<DienThoaiGiam> danhSach)
+        {
+            double giaToiDa;
+            do
+            {
+                Console.Write("Nhap muc gia toi da (>= 0): ");
+            }
+            while (!double.TryParse(Console.ReadLine(), out giaToiDa)
+                || double.IsNaN(giaToiDa) || double.IsInfinity(giaToiDa)
+                || giaToiDa < 0);
 
-                    <tr>
-                        <th>STT</th>
-                        <th>MaNV</th>
-                        <th>HoTen</th>
-                        <th>GioiTinh</th>
-                        <th>NgaySinh</th>
-                        <th>MaPhong</th>
-                        <th>Luong</th>
-                    </tr>
+            List<DienThoaiGiam> ketQua = new List<DienThoaiGiam>();
+            foreach (DienThoaiGiam dienThoai in danhSach)
+            {
+                if (dienThoai.TinhGia() <= giaToiDa)
+                    ketQua.Add(dienThoai);
+            }
 
-                    <xsl:for-each select="DanhSachNhanVien/NhanVien">
+            SapXepTheoGia(ketQua);
+            HienThiDanhSach(ketQua);
+        }
 
-                        <xsl:sort select="HoTen/Ten"
-                                  order="ascending"
-                                  data-type="text"
-                                  lang="vi"/>
+        private static void TimTheoMa(List<DienThoaiGiam> danhSach)
+        {
+            Console.Write("Nhap ma dien thoai can tim: ");
+            string maCanTim = (Console.ReadLine() ?? "").Trim();
+            foreach (DienThoaiGiam dienThoai in danhSach)
+            {
+                if (string.Equals(dienThoai.maDT, maCanTim, StringComparison.OrdinalIgnoreCase))
+                {
+                    DienThoaiGiam.HienThiTieuDe();
+                    dienThoai.HienThi();
+                    return;
+                }
+            }
 
-                        <tr>
-                            <td>
-                                <xsl:value-of select="position()"/>
-                            </td>
-
-                            <td>
-                                <xsl:value-of select="MaNV"/>
-                            </td>
-
-                            <td>
-                                <xsl:value-of select="concat(HoTen/HoDem, ' ', HoTen/Ten)"/>
-                            </td>
-
-                            <td>
-                                <xsl:value-of select="GioiTinh"/>
-                            </td>
-
-                            <td>
-                                <xsl:value-of select="concat(substring(NgaySinh, 1, 2), '/', substring(NgaySinh, 4, 2), '/', substring(NgaySinh, 7, 4))"/>
-                            </td>
-
-                            <td>
-                                <xsl:value-of select="MaPhong"/>
-                            </td>
-
-                            <td>
-                                <xsl:value-of select="Luong"/>
-                            </td>
-                        </tr>
-
-                    </xsl:for-each>
-
-                </table>
-            </body>
-        </html>
-    </xsl:template>
-
-</xsl:stylesheet>
+            Console.WriteLine("Khong tim thay dien thoai co ma nay.");
+        }
+    }
+}
