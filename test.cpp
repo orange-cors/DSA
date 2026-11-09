@@ -1,231 +1,127 @@
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
+using System;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
-using namespace std;
+namespace Valid
+{
+    public partial class Form1 : Form
+    {
+        string path = @"..\..\bangdiem.xml";
+        XDocument doc;
 
-struct DienThoai{
-    int id;
-    string nhanHieu;
-    int kichThuoc;
-    int gia;
-};
+        public Form1()
+        {
+            InitializeComponent();
+        }
 
-string hang[] = {
-    "iPhone",
-    "Samsung",
-    "Xiaomi",
-    "Oppo",
-    "Vivo",
-    "Nokia"
-};
+        // 3b. Load dữ liệu lên lưới
+        void LoadData()
+        {
+            doc = XDocument.Load(path);
+            dgvBangDiem.Rows.Clear();
+            int stt = 1;
 
-int sizeList[] = {5, 6, 7, 8};
-
-int n, s;
-
-int f[100][100] = {0};
-
-void khoiTao(DienThoai d[]){
-
-    for(int i = 0; i < n; i++){
-
-        d[i].id = i + 1;
-
-        d[i].nhanHieu = hang[rand() % 6];
-
-        d[i].kichThuoc = sizeList[rand() % 4];
-
-        d[i].gia =
-            (1LL * rand() * rand()) % 500000 + 100000;
-    }
-}
-
-void hienThi(DienThoai d[]){
-
-    cout << "\nDanh sach dien thoai:\n\n";
-
-    for(int i = 0; i < n; i++){
-
-        cout << "SP "
-             << d[i].id
-             << " | "
-             << d[i].nhanHieu
-             << " | Size: "
-             << d[i].kichThuoc
-             << " | Gia: "
-             << d[i].gia
-             << endl;
-    }
-
-    cout << endl;
-}
-
-void sortGreedy(DienThoai d[]){
-
-    for(int i = 0; i < n - 1; i++){
-
-        for(int j = 0; j < n - i - 1; j++){
-
-            double r1 =
-                (double)d[j].gia / d[j].kichThuoc;
-
-            double r2 =
-                (double)d[j+1].gia / d[j+1].kichThuoc;
-
-            if(r1 < r2){
-
-                DienThoai tmp = d[j];
-                d[j] = d[j+1];
-                d[j+1] = tmp;
+            foreach (var sv in doc.Descendants("sinhvien"))
+            {
+                dgvBangDiem.Rows.Add(
+                    stt++,
+                    (string)sv.Attribute("masv"),
+                    (string)sv.Attribute("monhoc"),
+                    (string)sv.Element("diemlan1"),
+                    (string)sv.Element("diemlan2")
+                );
             }
         }
-    }
-}
 
-void greedy(DienThoai d[]){
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Gắn sự kiện cho bảng và các nút Sửa, Xóa, Thoát
+            dgvBangDiem.CellClick += dgvBangDiem_CellClick;
+            btnSua.Click += btnSua_Click;
+            btnXoa.Click += btnXoa_Click;
+            btnThoat.Click += btnThoat_Click;
 
-    sortGreedy(d);
+            if (cbMonHoc.Items.Count == 0)
+                cbMonHoc.Items.AddRange(new string[] { "Lập trình Windows", "Lập trình Java", "Cơ sở dữ liệu" });
+            cbMonHoc.SelectedIndex = 0;
 
-    int tongGia = 0;
-
-    int tongSize = 0;
-
-    int soLuong = 0;
-
-    cout << "\nGreedy chon:\n\n";
-
-    for(int i = 0; i < n; i++){
-
-        if(tongSize + d[i].kichThuoc <= s){
-
-            cout << "SP "
-                 << d[i].id
-                 << " | "
-                 << d[i].nhanHieu
-                 << " | "
-                 << d[i].kichThuoc
-                 << " | "
-                 << d[i].gia
-                 << endl;
-
-            tongSize += d[i].kichThuoc;
-
-            tongGia += d[i].gia;
-
-            soLuong++;
+            LoadData();
         }
-    }
 
-    cout << "\nSo dien thoai lay duoc: "
-         << soLuong
-         << endl;
+        // 3c. Nút THÊM (Có kiểm tra chống trùng mã)
+        private void btnThem_Click(object sender, EventArgs e)
+        {
+            var sv = doc.Descendants("sinhvien").FirstOrDefault(x => (string)x.Attribute("masv") == txtMaSV.Text);
+            if (sv != null)
+            {
+                MessageBox.Show("Mã sinh viên này đã tồn tại!");
+                return;
+            }
 
-    cout << "Tong gia lon nhat (Greedy): "
-         << tongGia
-         << endl;
-}
+            doc.Root.Add(new XElement("sinhvien",
+                new XAttribute("masv", txtMaSV.Text),
+                new XAttribute("monhoc", cbMonHoc.Text),
+                new XElement("diemlan1", txtDiemLan1.Text),
+                new XElement("diemlan2", txtDiemLan2.Text)
+            ));
 
-void dp(DienThoai d[]){
+            doc.Save(path);
+            LoadData();
+            MessageBox.Show("Thêm thành công!");
+        }
 
-    for(int i = 1; i <= n; i++){
-
-        for(int j = 0; j <= s; j++){
-
-            f[i][j] = f[i-1][j];
-
-            if(d[i-1].kichThuoc <= j){
-
-                int tmp =
-                    d[i-1].gia
-                    + f[i-1][j-d[i-1].kichThuoc];
-
-                if(tmp > f[i][j]){
-
-                    f[i][j] = tmp;
-                }
+        // 3d. Bấm vào dòng trên lưới hiển thị lên ô nhập
+        private void dgvBangDiem_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvBangDiem.Rows[e.RowIndex].Cells[1].Value != null)
+            {
+                var r = dgvBangDiem.Rows[e.RowIndex];
+                txtMaSV.Text = r.Cells[1].Value.ToString();
+                cbMonHoc.Text = r.Cells[2].Value.ToString();
+                txtDiemLan1.Text = r.Cells[3].Value.ToString();
+                txtDiemLan2.Text = r.Cells[4].Value.ToString();
             }
         }
-    }
-}
 
-void hienThiBangPA(){
-    for(int i = 0;i<=n;i++){
-        for(int j=0;j<=s;j++){
-            cout <<f[i][j]<<"\t";
-        }cout <<endl;
-    }cout <<endl;
-}
+        // 3e. Nút SỬA: Tìm rồi set giá trị mới
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            var sv = doc.Descendants("sinhvien").FirstOrDefault(x => (string)x.Attribute("masv") == txtMaSV.Text);
+            if (sv != null)
+            {
+                sv.SetAttributeValue("monhoc", cbMonHoc.Text);
+                sv.SetElementValue("diemlan1", txtDiemLan1.Text);
+                sv.SetElementValue("diemlan2", txtDiemLan2.Text);
 
-void truyVet(DienThoai d[]){
-
-    int i = n;
-
-    int j = s;
-
-    int soLuong = 0;
-
-    cout << "\nDP chon:\n\n";
-
-    while(i > 0 && j > 0){
-
-        if(f[i][j] != f[i-1][j]){
-
-            cout << "SP "
-                 << d[i-1].id
-                 << " | "
-                 << d[i-1].nhanHieu
-                 << " | "
-                 << d[i-1].kichThuoc
-                 << " | "
-                 << d[i-1].gia
-                 << endl;
-
-            j -= d[i-1].kichThuoc;
-
-            soLuong++;
+                doc.Save(path);
+                LoadData();
+                MessageBox.Show("Sửa thành công!");
+            }
         }
 
-        i--;
+        // 3f. Nút XÓA: Tìm rồi gọi Remove()
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            var sv = doc.Descendants("sinhvien").FirstOrDefault(x => (string)x.Attribute("masv") == txtMaSV.Text);
+            if (sv != null)
+            {
+                sv.Remove();
+                doc.Save(path);
+                LoadData();
+                MessageBox.Show("Xóa thành công!");
+            }
+        }
+
+        // Nút THOÁT
+        private void btnThoat_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void dgvBangDiem_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
-
-    cout <<"Bang phuong an:\n";
-    hienThiBangPA();
-
-    cout << "\nSo dien thoai lay duoc: "
-         << soLuong
-         << endl;
-
-    cout << "Tong gia lon nhat (DP): "
-         << f[n][s]
-         << endl;
-}
-
-int main(){
-
-    srand(time(0));
-
-    do{
-        cout << "Nhap n (5 <= n <= 10): ";
-        cin >> n;
-    }while(n < 5 || n > 10);
-
-    do{
-        cout << "Nhap kich thuoc tui s: ";
-        cin >> s;
-    }while(s <= 0);
-
-    DienThoai d[20];
-
-    khoiTao(d);
-
-    hienThi(d);
-
-    greedy(d);
-
-    dp(d);
-
-    truyVet(d);
-
-    return 0;
 }
